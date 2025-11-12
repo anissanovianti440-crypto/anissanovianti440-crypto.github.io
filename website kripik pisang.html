@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keripik Pisang ENAK - Website Resmi</title>
+    <!-- Load Tailwind CSS CDN untuk styling modern dan responsif -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Font Inter dari Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <!-- Load tsparticles CDN untuk efek partikel -->
+    <script src="https://cdn.jsdelivr.net/npm/@tsparticles/confetti@3.0.3/browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@3.5.0/tsparticles.bundle.min.js"></script>
+    <style>
+        /* Mengatur font dan menghilangkan margin default */
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Container partikel agar menutupi seluruh layar */
+        #tsparticles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0; /* Pastikan di belakang konten */
+        }
+
+        /* Konten utama agar berada di atas partikel */
+        #app-content {
+            position: relative;
+            z-index: 10; /* Pastikan di atas partikel */
+            background-color: transparent; /* Pastikan latar belakangnya transparan agar partikel terlihat */
+        }
+    </style>
+</head>
+<body class="bg-yellow-50 text-gray-800">
+
+    <!-- Container untuk Efek Partikel -->
+    <div id="tsparticles"></div>
+
+    <!-- Konten Aplikasi Utama -->
+    <div id="app-content" class="min-h-screen">
+
+        <!-- Header/Navbar -->
+        <header class="bg-white p-4 shadow-xl sticky top-0 z-20">
+            <div class="container mx-auto flex justify-between items-center">
+                <h1 class="text-3xl font-extrabold text-amber-600 tracking-wider">KRIPIK PISANG ENAK</h1>
+                <nav>
+                    <a href="#produk" class="text-gray-600 hover:text-amber-500 transition duration-300 mx-2 md:mx-4 font-semibold">Produk Kami</a>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Bagian Jumbotron/Promosi Utama -->
+        <section class="text-center py-16 md:py-24 bg-yellow-50 bg-opacity-90">
+            <h2 class="text-5xl md:text-7xl font-black mb-4 leading-tight text-amber-800">
+                Kriuknya Bikin Ketagihan!
+            </h2>
+            <p class="text-xl md:text-2xl text-gray-600 mb-8 max-w-2xl mx-auto">
+                Keripik Pisang Premium dengan rasa otentik dan tekstur yang renyah sempurna.
+            </p>
+            <button onclick="document.getElementById('produk').scrollIntoView({ behavior: 'smooth' });"
+                class="bg-amber-500 hover:bg-amber-600 text-gray-900 font-bold py-3 px-8 rounded-full shadow-lg transform hover:scale-105 transition duration-300">
+                Lihat Semua Rasa
+            </button>
+        </section>
+
+        <!-- Bagian Produk -->
+        <section id="produk" class="py-12 md:py-20 bg-white shadow-inner">
+            <div class="container mx-auto px-4">
+                <h2 class="text-4xl font-extrabold text-center mb-12 text-amber-600">Pilihan Rasa Favorit</h2>
+
+                <!-- Grid Produk -->
+                <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Kartu Produk akan di-generate oleh JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-amber-500 p-6 mt-12 text-center text-gray-900">
+            <p>&copy; 2024 Keripik Pisang ENAK. Semua Hak Dilindungi.</p>
+            <p class="text-sm mt-2">Didesain dengan Cinta dan Rasa.</p>
+        </footer>
+    </div>
+
+    <!-- Modal Pemilihan Jumlah (Quantity Selector) -->
+    <div id="quantity-modal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 hidden transition-opacity duration-300" onclick="closeModal(event)">
+        <div id="modal-content" class="bg-white p-6 md:p-8 rounded-xl shadow-2xl max-w-sm w-full transform transition-all duration-300 scale-95" onclick="event.stopPropagation()">
+            <h3 class="text-2xl font-bold mb-4 text-amber-700">Pesan <span id="modal-product-name"></span></h3>
+            <p class="text-gray-700 mb-4">Harga: <span id="modal-product-price" class="font-semibold text-xl"></span></p>
+
+            <label for="quantity-input" class="block text-gray-500 mb-2">Jumlah Beli (Pcs):</label>
+            <div class="flex items-center mb-6 border border-gray-300 rounded-lg overflow-hidden">
+                <button onclick="changeQuantity(-1)" class="bg-amber-200/50 hover:bg-amber-300 text-gray-800 p-3 font-extrabold text-lg transition">-</button>
+                <input type="number" id="quantity-input" value="1" min="1" class="w-full text-center bg-white text-gray-800 p-3 border-none focus:outline-none" readonly>
+                <button onclick="changeQuantity(1)" class="bg-amber-200/50 hover:bg-amber-300 text-gray-800 p-3 font-extrabold text-lg transition">+</button>
+            </div>
+
+            <p class="text-lg font-bold text-amber-700 mb-6">Total Harga: <span id="modal-total-price">Rp 0</span></p>
+
+            <div class="flex justify-end space-x-3">
+                <button onclick="hideModal()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg transition duration-300">
+                    Batal
+                </button>
+                <button onclick="addToCart()" class="bg-amber-500 hover:bg-amber-600 text-gray-900 font-bold py-2 px-4 rounded-lg shadow-md transition duration-300" id="btn-add-to-cart">
+                    Beli Sekarang
+                </button>
+            </div>
+            
+            <!-- Message Box (Menggantikan alert) -->
+            <div id="message-box" class="mt-4 p-3 bg-amber-600 text-white rounded-lg hidden"></div>
+        </div>
+    </div>
+
+    <script>
+        // Data Produk Keripik Pisang
+        const products = [
+            { id: 1, name: "Original Manis", price: 15000, description: "Rasa klasik manis dan gurih, dijamin renyah.", image: "https://github.com/anissanovianti440-crypto/jan/blob/main/Gemini_Generated_Image_alp7jsalp7jsalp7.png?raw=true" },
+            { id: 2, name: "Coklat Lumer", price: 20000, description: "Lapisan coklat tebal yang lumer di mulut.", image: "https://github.com/anissanovianti440-crypto/jan/blob/main/Gemini_Generated_Image_sv86ujsv86ujsv86.png?raw=true" },
+            { id: 3, name: "Pedas Balado", price: 18000, description: "Pedas yang bikin nagih, cocok untuk pecinta pedas.", image: "https://github.com/anissanovianti440-crypto/jan/blob/main/Gemini_Generated_Image_9uxnl49uxnl49uxn.png?raw=true" },
+            { id: 4, name: "Keju Creamy", price: 19000, description: "Rasa keju yang kaya dan lembut, sangat gurih.", image: "https://github.com/anissanovianti440-crypto/jan/blob/main/Gemini_Generated_Image_tmmrbftmmrbftmmr.png?raw=true" },
+            { id: 5, name: "Susu Vanilla", price: 17000, description: "Aroma vanilla manis dengan sentuhan susu.", image: "https://github.com/anissanovianti440-crypto/jan/blob/main/Gemini_Generated_Image_pej36spej36spej3.png?raw=true" },
+            { id: 6, name: "Green Tea", price: 22000, description: "Rasa teh hijau yang unik dan modern.", image: "https://github.com/anissanovianti440-crypto/jan/blob/main/Gemini_Generated_Image_542zdk542zdk542z.png?raw=true" }
+        ];
+
+        // Variabel state untuk modal
+        let selectedProduct = null;
+        let currentQuantity = 1;
+
+        // --- Fungsi Helper UI ---
+
+        /**
+         * Menampilkan pesan singkat di Message Box (menggantikan alert).
+         * @param {string} message Pesan yang akan ditampilkan.
+         */
+        function showMessage(message) {
+            const msgBox = document.getElementById('message-box');
+            msgBox.textContent = message;
+            msgBox.classList.remove('hidden');
+            setTimeout(() => {
+                msgBox.classList.add('hidden');
+            }, 3000); // Sembunyikan setelah 3 detik
+        }
+
+        // --- Inisialisasi Produk ---
+
+        /**
+         * Mengubah angka menjadi format mata uang Rupiah.
+         * @param {number} number Angka yang akan diformat.
+         * @returns {string} String format Rupiah.
+         */
+        function formatRupiah(number) {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0
+            }).format(number);
+        }
+
+        /**
+         * Membuat kartu produk dan menambahkannya ke grid.
+         */
+        function renderProducts() {
+            const grid = document.getElementById('product-grid');
+            grid.innerHTML = products.map(product => `
+                <div class="bg-white rounded-xl shadow-xl overflow-hidden hover:shadow-amber-500/50 transition duration-500 transform hover:scale-[1.02] border border-gray-100">
+                    <img src="${product.image}" alt="Keripik Pisang Rasa ${product.name}" class="w-full h-48 object-cover object-center" onerror="this.onerror=null;this.src='https://placehold.co/400x300/fffbeb/b45309?text=${product.name}';">
+                    <div class="p-6">
+                        <h3 class="text-2xl font-bold text-amber-600 mb-2">${product.name}</h3>
+                        <p class="text-gray-600 mb-4 h-12">${product.description}</p>
+                        <p class="text-3xl font-extrabold text-amber-700 mb-4">${formatRupiah(product.price)}</p>
+                        <button onclick="openModal(${product.id})"
+                            class="w-full bg-amber-500 hover:bg-amber-600 text-gray-900 font-bold py-3 rounded-lg transition duration-300 shadow-lg hover:shadow-xl">
+                            <span class="text-lg">Beli Keripik Pisang</span>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // --- Fungsi Modal Pemilihan Jumlah ---
+
+        /**
+         * Membuka modal pemilihan jumlah untuk produk tertentu.
+         * @param {number} productId ID produk yang dipilih.
+         */
+        function openModal(productId) {
+            selectedProduct = products.find(p => p.id === productId);
+            if (!selectedProduct) return;
+
+            // Atur nilai default
+            currentQuantity = 1;
+
+            // Update konten modal
+            document.getElementById('modal-product-name').textContent = selectedProduct.name;
+            document.getElementById('modal-product-price').textContent = formatRupiah(selectedProduct.price);
+            document.getElementById('quantity-input').value = currentQuantity;
+            
+            updateTotal();
+
+            // Tampilkan modal
+            const modal = document.getElementById('quantity-modal');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.style.opacity = '1';
+                document.getElementById('modal-content').classList.remove('scale-95');
+                document.getElementById('modal-content').classList.add('scale-100');
+            }, 10);
+        }
+
+        /**
+         * Menyembunyikan modal pemilihan jumlah.
+         */
+        function hideModal() {
+            const modal = document.getElementById('quantity-modal');
+            modal.style.opacity = '0';
+            document.getElementById('modal-content').classList.remove('scale-100');
+            document.getElementById('modal-content').classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        /**
+         * Menyembunyikan modal jika klik di luar konten.
+         * @param {Event} event Event klik.
+         */
+        function closeModal(event) {
+            if (event.target.id === 'quantity-modal') {
+                hideModal();
+            }
+        }
+
+        /**
+         * Mengubah jumlah keripik yang akan dibeli.
+         * @param {number} delta Perubahan jumlah (+1 atau -1).
+         */
+        function changeQuantity(delta) {
+            const input = document.getElementById('quantity-input');
+            let newQuantity = parseInt(input.value) + delta;
+            
+            if (newQuantity < 1) {
+                newQuantity = 1;
+            }
+
+            currentQuantity = newQuantity;
+            input.value = currentQuantity;
+            updateTotal();
+        }
+
+        /**
+         * Mengupdate total harga di modal.
+         */
+        function updateTotal() {
+            if (selectedProduct) {
+                const total = selectedProduct.price * currentQuantity;
+                document.getElementById('modal-total-price').textContent = formatRupiah(total);
+            }
+        }
+
+       /**
+         * Logika final setelah klik "Beli Sekarang" (integrasi WhatsApp).
+         */
+        function addToCart() {
+            if (selectedProduct) {
+                const total = selectedProduct.price * currentQuantity;
+                
+                // --- Integrasi WhatsApp ---
+                // !! GANTI NOMOR INI DENGAN NOMOR WA ANDA !!
+                const nomorWA = "62881022087142"; 
+                
+                // Buat format pesan yang lebih rapi
+                const pesanWA = `Halo, saya tertarik untuk memesan Keripik Pisang ENAK:
+- Produk: *${selectedProduct.name}*
+- Jumlah: *${currentQuantity} pcs*
+- Total Harga: *${formatRupiah(total)}*
+
+Mohon info lanjut untuk pemesanannya. Terima kasih!`;
+
+                // Buat URL WhatsApp
+                const urlWA = `https://wa.me/${nomorWA}?text=${encodeURIComponent(pesanWA)}`;
+                
+                // Buka di tab baru
+                window.open(urlWA, '_blank');
+                
+                // Sembunyikan modal setelah mengklik
+                hideModal();
+            }
+        }
+
+        // --- Inisialisasi Partikel (tsparticles) ---
+
+        /**
+         * Menginisialisasi efek partikel.
+         */
+        function initParticles() {
+            if (window.tsParticles) {
+                window.tsParticles.load({
+                    id: "tsparticles",
+                    options: {
+                        fullScreen: { enable: true, zIndex: 0 },
+                        particles: {
+                            number: { value: 50 },
+                            // Warna partikel diubah menjadi nuansa kuning, amber, dan hitam
+                            color: { value: ["#d97706", "#fde047", "#000000"] }, // Amber, Yellow, Black
+                            shape: { type: "circle" },
+                            opacity: { value: 0.5, random: true },
+                            size: { value: 3, random: true },
+                            move: {
+                                enable: true,
+                                speed: 1,
+                                direction: "none",
+                                random: true,
+                                straight: false,
+                                out_mode: "out",
+                                bounce: false,
+                            },
+                        },
+                        interactivity: {
+                            events: {
+                                onHover: { enable: true, mode: "repulse" },
+                                onClick: { enable: true, mode: "push" },
+                            },
+                            modes: {
+                                repulse: { distance: 100, duration: 0.4 },
+                                push: { particles_nb: 4 },
+                            },
+                        },
+                        retina_detect: true,
+                        background: {
+                            // Latar belakang partikel diubah menjadi warna kuning yang sangat muda
+                            color: "#fffbeb", 
+                        },
+                    },
+                });
+            } else {
+                console.error("tsparticles library not loaded.");
+            }
+        }
+
+
+        // --- Eksekusi Saat Dokumen Siap ---
+
+        window.onload = function () {
+            // Render produk saat halaman dimuat
+            renderProducts();
+            
+            // Inisialisasi efek partikel
+            initParticles();
+        };
+
+    </script>
+
+</body>
+</html>
